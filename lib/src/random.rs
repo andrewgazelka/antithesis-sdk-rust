@@ -1,5 +1,5 @@
-use rand::{Error, RngCore};
 use crate::internal;
+use rand::RngCore;
 
 /// Returns a u64 value chosen by Antithesis. You should not
 /// store this value or use it to seed a PRNG, but should use it
@@ -58,9 +58,9 @@ pub fn random_choice<T>(slice: &[T]) -> Option<&T> {
 /// use rand::{Rng, RngCore};
 ///
 /// let mut rng = AntithesisRng;
-/// let random_u32: u32 = rng.gen();
-/// let random_u64: u64 = rng.gen();
-/// let random_char: char = rng.gen();
+/// let random_u32: u32 = rng.random();
+/// let random_u64: u64 = rng.random();
+/// let random_char: char = rng.random();
 ///
 /// let mut bytes = [0u8; 16];
 /// rng.fill_bytes(&mut bytes);
@@ -99,19 +99,14 @@ impl RngCore for AntithesisRng {
             remainder.copy_from_slice(&random_bytes[..remainder.len()]);
         }
     }
-
-    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Error> {
-        self.fill_bytes(dest);
-        Ok(())
-    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::collections::{HashMap, HashSet};
+    use rand::seq::IndexedRandom;
     use rand::Rng;
-    use rand::seq::SliceRandom;
+    use std::collections::{HashMap, HashSet};
 
     #[test]
     fn random_choice_no_choices() {
